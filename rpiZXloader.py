@@ -8,6 +8,8 @@ import simpleaudio as sa
 app_name = "rpiZXloader"
 logo_title_path = "/home/romain/Documents/rpiZXloader/logo/header.png"
 logo_bg_path = "/home/romain/Documents/rpiZXloader/logo/logo-rainbow.png"
+logo_bolo_path = "/home/romain/Documents/rpiZXloader/logo/logo-bolo.png"
+information_path = "/home/romain/Documents/rpiZXloader/logo/information.png"
 
 games_library = (
     (
@@ -54,6 +56,11 @@ nb_games_per_page = 4
 
 window_background =  "black"
 
+ZX_RED    = "#fe0000"
+ZX_YELLOW = "#ffff01"
+ZX_GREEN  = "#00ff01"
+ZX_BLUE   = "#01ffff"
+
 
 class MainWin(Frame):
     """
@@ -61,14 +68,14 @@ class MainWin(Frame):
     def __init__(self, master = None):
         Frame.__init__(self, master)
         self.master = master
+
+        self.screen_width  = self.master.winfo_screenwidth()
+        self.screen_height = self.master.winfo_screenheight()
+        self.but_game = [0]*len(games_library)
+
         self.master.title(app_name)
-        screen_width  = self.master.winfo_screenwidth()
-        screen_height = self.master.winfo_screenheight()
-        self.master.geometry("%dx%d" % (screen_width, screen_height))
         self.master.config(background = window_background)
         self.master.attributes("-fullscreen", True)
-
-        self.master.bind("<Escape>", self.prog_quit)
 
         #  LOGO
         ## TITLE
@@ -76,92 +83,116 @@ class MainWin(Frame):
         logo_title = ImageTk.PhotoImage(logo_title_img)
         title = Label(image = logo_title, bg = window_background)
         title.image = logo_title
-        #title.pack(side = TOP)
-        #title.grid(row = 0, column = 1, sticky = N)
-        title.place(x = (screen_width-logo_title_img.size[0])/2,
+        title.place(x = (self.screen_width-logo_title_img.size[0])/2,
                     y = 0)
         ## BACKGROUND
         logo_bg_img = Image.open(logo_bg_path)
         logo_bg = ImageTk.PhotoImage(logo_bg_img)
         bg = Label(image = logo_bg, bg = window_background)
         bg.image = logo_bg
-        #bg.pack(side = RIGHT)
-        #bg.grid(row = 1, column = 2, sticky = SE)
-        bg.place(x = screen_width - logo_bg_img.size[0],
-                 y = screen_height - logo_bg_img.size[1])
+        bg.place(x = self.screen_width - logo_bg_img.size[0],
+                 y = self.screen_height - logo_bg_img.size[1])
+        ## LOGO BOLO
+        logo_bolo_img = Image.open(logo_bolo_path)
+        logo_bolo = ImageTk.PhotoImage(logo_bolo_img)
+        bolo = Label(image = logo_bolo, bg = window_background)
+        bolo.image = logo_bolo
+        bolo.place(x = 10,
+                   y = self.screen_height - logo_bolo_img.size[1] - 10)
 
-        # MAIN ZONE
-        main_zone = Frame(master, bg = window_background)
-        buttons_zone = Frame(main_zone, bg = window_background)
-        self.f_but_games = Frame(buttons_zone, background = window_background)
-        self.displayFrameButtonsGames(current_page)
-
-        f_but_sel_page = Frame(buttons_zone)
-        but_next_page = Button(f_but_sel_page,
-                               bg = window_background,
-                               fg = "white",
-                               text = "\u21FE",
-                               command = lambda:self.displayFrameButtonsGames(
-                                                            current_page+1)
-                              )
-        but_next_page.pack(side = RIGHT)
-        but_prev_page = Button(f_but_sel_page,
-                               background = window_background,
-                               fg = "white",
-                               text = "\u21FD",
-                               command = lambda:self.displayFrameButtonsGames(
-                                                            current_page-1)
-                               )
-        but_prev_page.pack(side = LEFT)
-
-        but_help = Button(f_but_sel_page,
-                          background = window_background,
-                          fg = "white",
+        #  MAIN ZONE
+        main_zone = Frame(master,
+                          bg = window_background,
+                          height = logo_bg_img.size[1],
+                          width = self.screen_width/2 - logo_title_img.size[0]/2)
+        ## BUTTONS TO PLAY THE GAMES
+        f_but_games = LabelFrame(main_zone,
+                                 bg = window_background, fg = ZX_YELLOW,
+                                 padx = 10, pady = 10,
+                                 text = "JEUX")
+        self.displayButtonsGames(f_but_games)
+        f_but_games.pack()
+        ## CONTROL BUTTONS
+        control_zone = Frame(main_zone, bg = window_background,
+                             padx = 10, pady = 10)
+        but_info = Button(control_zone,
+                          activebackground = ZX_GREEN,
+                          bg = window_background,
+                          fg = ZX_BLUE,
+                          highlightbackground = ZX_GREEN,
+                          relief = "flat",
+                          text = "INFORMATION",
+                          command = lambda:self.infoWin(master))
+        but_info.pack(padx = 3, side = LEFT)
+        but_help = Button(control_zone,
+                          activebackground = ZX_GREEN,
+                          bg = window_background,
+                          fg = ZX_BLUE,
+                          highlightbackground = ZX_GREEN,
+                          relief = "flat",
                           text = "HELP",
                           command = lambda:self.helpWin(master))
-        but_help.pack()
+        but_help.pack(padx = 3, side = LEFT)
+        but_quit = Button(control_zone,
+                          activebackground = ZX_GREEN,
+                          bg = window_background,
+                          fg = ZX_BLUE,
+                          highlightbackground = ZX_GREEN,
+                          relief = "flat",
+                          text = "QUITTER",
+                         command = self.master.destroy)
+        but_quit.pack(padx = 3, side = RIGHT)
+        control_zone.pack(pady = 15, side = BOTTOM)
+        main_zone.place(x = self.screen_width/2 - main_zone.winfo_reqwidth()/2,
+                        y = logo_title_img.size[1]
+                            + self.screen_height/2
+                            - main_zone.winfo_reqheight()/2)
 
-        f_but_sel_page.pack(side = BOTTOM)
-        buttons_zone.pack()
-        #main_zone.pack()
-        #main_zone.grid(row = 1, column = 1)
-        main_zone.place(x = 0,
-                        y = logo_title_img.size[1])
+    def displayButtonsGames(self, master):
+        for x in range(len(games_library)):
+            self.but_game[x] = Button(master,
+                                      activebackground = ZX_YELLOW,
+                                      bg = window_background,
+                                      fg = ZX_RED,
+                                      highlightbackground = ZX_YELLOW,
+                                      relief = "flat",
+                                      text = games_library[x][0],
+                                      command = lambda val=x:self.playGame(val))
+            self.but_game[x].pack(fill = X, side = TOP,
+                                  pady = 3)
 
-    def displayFrameButtonsGames(self, page):
-        if page > int(len(games_library)/nb_games_per_page+1):
-            page = int(len(games_library)/nb_games_per_page+1)
-        if page < 1:
-            page = 1
-        if self.f_but_games.winfo_ismapped():
-            self.f_but_games.destroy()
-            self.f_but_games = Frame(self.master)
-        self.displayButtonsGames(self.f_but_games,
-                                 (page-1)*nb_games_per_page,
-                                 (page*nb_games_per_page))
-        self.f_but_games.pack()
+    def disableButtonsGames(self, exception):
+        for x in range(len(games_library)):
+            if x == exception:
+                self.but_game[x].config(bg = ZX_YELLOW,
+                                        fg = "black",
+                                        state = "active",
+                                        command = lambda:self.stopWave())
+            else:
+                self.but_game[x].config(bg = ZX_RED,
+                                        fg = "black",
+                                        highlightbackground = ZX_YELLOW,
+                                        state = "disabled")
 
-    def displayButtonsGames(self, master, first_game, last_game):
-        if last_game > len(games_library):
-            last_game = len(games_library)
-        for x in range(first_game, last_game):
-            but = Button(master,
-                         activebackground = "gray",
-                         bg = window_background,
-                         fg = "white",
-                         relief = "sunken",
-                         text = games_library[x][0],
-                         #width = 30,
-                         command = lambda:self.playWave(games_library[x][1]))
-            but.pack()
+    def enableAllButtonsGames(self):
+        for x in range(len(games_library)):
+            self.but_game[x].config(state = "normal",
+                                    bg = window_background,
+                                    fg = ZX_RED,
+                                    highlightbackground = ZX_YELLOW,
+                                    command = lambda val=x:self.playGame(val))
 
-    def playGame(self, wav):
-        playWave(wav)
+    def playGame(self, game_nb):
+        self.disableButtonsGames(game_nb)
+        self.playWave(game_nb)
 
-    def playWave(self, wav):
-        wave_obj = sa.WaveObject.from_wave_file(wav)
-        play_obj = wave_obj.play()
-        play_obj.wait_done()
+    def playWave(self, game_nb):
+        self.wave_obj = sa.WaveObject.from_wave_file(games_library[game_nb][1])
+        self.play_obj = self.wave_obj.play()
+
+    def stopWave(self):
+        self.play_obj.stop()
+        self.enableAllButtonsGames()
 
     def helpWin(self, master):
         pup = Toplevel(master)
@@ -170,8 +201,17 @@ class MainWin(Frame):
         button_quit = Button(pup, text = "Quit", command = pup.destroy)
         button_quit.pack()
 
-    def prog_quit(self):
-        self.master.quit()
+    def infoWin(self, master):
+        pup = Toplevel(master, bg = window_background)
+        info_img = Image.open(information_path)
+        info = ImageTk.PhotoImage(info_img)
+        info_l = Label(pup, image = info, bg = window_background)
+        info_l.image = info
+        info_l.pack(side = TOP)
+        pup.geometry("%dx%d+%d+%d" % (info_img.size[0]+20,
+                                      info_img.size[1]+20,
+                                      (self.screen_width/2)-(info_img.size[0]/2)-10,
+                                      0))
 
 
 if __name__ == '__main__':
