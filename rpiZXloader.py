@@ -13,6 +13,10 @@ information_path = "/home/romain/Documents/rpiZXloader/logo/information.png"
 
 games_library = (
     (
+        "SHORT",
+        "/home/romain/Documents/zxSpectrum/short.wav"
+    ),
+    (
         "Boulder Dash",
         "/home/romain/Documents/zxSpectrum/games/boulder_dash/boulder_dash.wav"
     ),
@@ -186,9 +190,15 @@ class MainWin(Frame):
         self.disableButtonsGames(game_nb)
         self.playWave(game_nb)
 
+    def playWaveLoop(self):
+        if not self.play_obj.is_playing():
+            self.stopWave()
+        self.after(1000, self.playWaveLoop)
+
     def playWave(self, game_nb):
         self.wave_obj = sa.WaveObject.from_wave_file(games_library[game_nb][1])
         self.play_obj = self.wave_obj.play()
+        self.playWaveLoop()
 
     def stopWave(self):
         self.play_obj.stop()
@@ -203,15 +213,25 @@ class MainWin(Frame):
 
     def infoWin(self, master):
         pup = Toplevel(master, bg = window_background)
+        #pup.geometry("%dx%d+%d+%d" % (info_img.size[0]+20,
+        #                              info_img.size[1]+20,
+        #                              (self.screen_width/2)-(info_img.size[0]/2)-10,
+        #                              0))
+        pup.attributes("-fullscreen", True)
         info_img = Image.open(information_path)
         info = ImageTk.PhotoImage(info_img)
         info_l = Label(pup, image = info, bg = window_background)
         info_l.image = info
         info_l.pack(side = TOP)
-        pup.geometry("%dx%d+%d+%d" % (info_img.size[0]+20,
-                                      info_img.size[1]+20,
-                                      (self.screen_width/2)-(info_img.size[0]/2)-10,
-                                      0))
+        but_quit = Button(pup,
+                          activebackground = ZX_GREEN,
+                          bg = window_background,
+                          fg = ZX_BLUE,
+                          highlightbackground = ZX_GREEN,
+                          relief = "flat",
+                          text = "QUITTER",
+                         command = pup.destroy)
+        but_quit.pack(pady = 5, side = BOTTOM)
 
 
 if __name__ == '__main__':
