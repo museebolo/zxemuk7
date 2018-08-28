@@ -1,0 +1,1 @@
+# ZX Emulator of cassette

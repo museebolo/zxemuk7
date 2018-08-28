@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+# Project: ZX emulator of K7
+# File: zxemuk7.py
+# Version: 0.1
+# Create by: Rom1 <rom1@canel.ch> - CANEL - https://www.canel.ch
+# Date: 28/08/2018
+# Licence: GNU GENERAL PUBLIC LICENSE v3
+# Language: Python 3
+# Description:  GUI to load games on the ZX Spectrum via audio interface.
+
 
 from tkinter import *
 from PIL import Image, ImageTk
@@ -6,10 +15,10 @@ import simpleaudio as sa
 
 
 app_name = "rpiZXloader"
-logo_title_path = "/home/romain/Documents/rpiZXloader/logo/header.png"
-logo_bg_path = "/home/romain/Documents/rpiZXloader/logo/logo-rainbow.png"
-logo_bolo_path = "/home/romain/Documents/rpiZXloader/logo/logo-bolo.png"
-information_path = "/home/romain/Documents/rpiZXloader/logo/information.png"
+logo_title_path = "./logo/header.png"
+logo_bg_path = "./logo/logo-rainbow.png"
+logo_bolo_path = "./logo/logo-bolo.png"
+information_path = "./logo/information.png"
 
 games_library = (
     (
@@ -230,7 +239,7 @@ class MainWin(Frame):
                           highlightbackground = ZX_GREEN,
                           relief = "flat",
                           text = "QUITTER",
-                         command = self.unlock)
+                         command = self.pup.destroy)
         but_quit.pack(pady = 5, side = BOTTOM)
 
     def unlock(self):
@@ -241,11 +250,11 @@ class MainWin(Frame):
         self.pup_passwd = Toplevel(master, bg = window_background)
         self.passwd = StringVar()
         self.e_passwd = Entry(master, textvariable = self.passwd)
-        but_ok = Button(master, text = "OK", command = )
+        but_ok = Button(master, text = "OK", command = "")
 
-    def checkPasswd(self)
+    def checkPasswd(self):
         if self.asswd.get() == "1234":
-            break
+            print("hello")
 
 
 if __name__ == '__main__':
