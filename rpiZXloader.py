@@ -212,26 +212,40 @@ class MainWin(Frame):
         button_quit.pack()
 
     def infoWin(self, master):
-        pup = Toplevel(master, bg = window_background)
-        #pup.geometry("%dx%d+%d+%d" % (info_img.size[0]+20,
+        self.pup_info = Toplevel(master, bg = window_background)
+        #self.pup_info.geometry("%dx%d+%d+%d" % (info_img.size[0]+20,
         #                              info_img.size[1]+20,
         #                              (self.screen_width/2)-(info_img.size[0]/2)-10,
         #                              0))
-        pup.attributes("-fullscreen", True)
+        self.pup_info.attributes("-fullscreen", True)
         info_img = Image.open(information_path)
         info = ImageTk.PhotoImage(info_img)
-        info_l = Label(pup, image = info, bg = window_background)
+        info_l = Label(self.pup_info, image = info, bg = window_background)
         info_l.image = info
         info_l.pack(side = TOP)
-        but_quit = Button(pup,
+        but_quit = Button(self.pup_info,
                           activebackground = ZX_GREEN,
                           bg = window_background,
                           fg = ZX_BLUE,
                           highlightbackground = ZX_GREEN,
                           relief = "flat",
                           text = "QUITTER",
-                         command = pup.destroy)
+                         command = self.unlock)
         but_quit.pack(pady = 5, side = BOTTOM)
+
+    def unlock(self):
+        self.passwdWin()
+        self.pup.destroy()
+
+    def passwdWin(self, master):
+        self.pup_passwd = Toplevel(master, bg = window_background)
+        self.passwd = StringVar()
+        self.e_passwd = Entry(master, textvariable = self.passwd)
+        but_ok = Button(master, text = "OK", command = )
+
+    def checkPasswd(self)
+        if self.asswd.get() == "1234":
+            break
 
 
 if __name__ == '__main__':
