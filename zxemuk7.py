@@ -13,59 +13,53 @@ from tkinter import *
 from PIL import Image, ImageTk
 import simpleaudio as sa
 
-
-app_name = "rpiZXloader"
-logo_title_path = "./logo/header.png"
-logo_bg_path = "./logo/logo-rainbow.png"
-logo_bolo_path = "./logo/logo-bolo.png"
-information_path = "./logo/information.png"
+app_name = "ZX emulator of cassette"
+local_path = "."
+img_path   = local_path + "/img"
+games_path = local_path + "/games"
+logo_title_path  = img_path + "/header.png"
+logo_bg_path     = img_path + "/logo-rainbow.png"
+logo_bolo_path   = img_path + "/logo-bolo.png"
+information_path = img_path + "/information.png"
 
 games_library = (
     (
-        "SHORT",
-        "/home/romain/Documents/zxSpectrum/short.wav"
-    ),
-    (
         "Boulder Dash",
-        "/home/romain/Documents/zxSpectrum/games/boulder_dash/boulder_dash.wav"
+        games_path + "/boulder_dash/boulder_dash.wav"
     ),
     (
         "Crystal Quest",
-        "/home/romain/Documents/zxSpectrum/games/crystal_quest/crystal_quest.wav"
+        games_path + "/crystal_quest/crystal_quest.wav"
     ),
     (
         "Double Dragon",
-        "/home/romain/Documents/zxSpectrum/games/double_dragon/double_dragon.wav"
+        games_path + "/double_dragon/double_dragon.wav"
     ),
     (
         "Elite",
-        "/home/romain/Documents/zxSpectrum/games/elite/elite.wav"
+        games_path + "/elite/elite.wav"
     ),
     (
         "Eric and the floaters",
-        "/home/romain/Documents/zxSpectrum/games/eric_and_the_floaters/eric.wav"
+        games_path + "/eric_and_the_floaters/eric.wav"
     ),
     (
         "Sentinel",
-        "/home/romain/Documents/zxSpectrum/games/sentinel/sentinel.wav"
+        games_path + "/sentinel/sentinel.wav"
     ),
     (
         "Sim City",
-        "/home/romain/Documents/zxSpectrum/games/sim_city/sim_city.wav"
+        games_path + "/sim_city/sim_city.wav"
     ),
     (
         "Spy Hunter",
-        "/home/romain/Documents/zxSpectrum/games/spy_hunter/spy_hunter.wav"
+        games_path + "/spy_hunter/spy_hunter.wav"
     ),
     (
         "Tempest",
-        "/home/romain/Documents/zxSpectrum/games/tempest/tempest.wav"
+        games_path + "/tempest/tempest.wav"
     )
 )
-
-start_games_pages = 1
-current_page = 1
-nb_games_per_page = 4
 
 window_background =  "black"
 
@@ -241,20 +235,6 @@ class MainWin(Frame):
                           text = "QUITTER",
                          command = self.pup.destroy)
         but_quit.pack(pady = 5, side = BOTTOM)
-
-    def unlock(self):
-        self.passwdWin()
-        self.pup.destroy()
-
-    def passwdWin(self, master):
-        self.pup_passwd = Toplevel(master, bg = window_background)
-        self.passwd = StringVar()
-        self.e_passwd = Entry(master, textvariable = self.passwd)
-        but_ok = Button(master, text = "OK", command = "")
-
-    def checkPasswd(self):
-        if self.asswd.get() == "1234":
-            print("hello")
 
 
 if __name__ == '__main__':
